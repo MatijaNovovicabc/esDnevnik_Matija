@@ -368,12 +368,14 @@ namespace esDnevnik_Mat
             this.smerToolStripMenuItem.Name = "smerToolStripMenuItem";
             this.smerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.smerToolStripMenuItem.Text = "Smer";
+            this.smerToolStripMenuItem.Click += new System.EventHandler(this.smerToolStripMenuItem_Click);
             // 
             // predmetToolStripMenuItem
             // 
             this.predmetToolStripMenuItem.Name = "predmetToolStripMenuItem";
             this.predmetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.predmetToolStripMenuItem.Text = "Predmet";
+            this.predmetToolStripMenuItem.Click += new System.EventHandler(this.predmetToolStripMenuItem_Click);
             // 
             // odeljenjaToolStripMenuItem
             // 

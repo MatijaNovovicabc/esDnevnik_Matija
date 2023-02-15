@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Security.Cryptography.X509Certificates;
 
 namespace esDnevnik_Mat
 {
@@ -111,13 +112,30 @@ namespace esDnevnik_Mat
             textBox2.Text = a.Rows[0][1].ToString();
         }
 
+        public void Smer(int id)
+        {
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select top " + id + " * from smer except select top " + (id - 1) + " * from smer");
+            textBox1.Text = a.Rows[0][0].ToString();
+            textBox2.Text = a.Rows[0][1].ToString();
+        }
+
+        public void Predmet(int id)
+        {
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select top " + id + " * from predmet except select top " + (id - 1) + " * from predmet");
+            textBox1.Text = a.Rows[0][0].ToString();
+            textBox2.Text = a.Rows[0][1].ToString();
+            textBox3.Text = a.Rows[0][2].ToString();
+        }
+
         private void label4_Click(object sender, EventArgs e)
         {
             label1.Visible = true;
             label2.Visible = true;
             label3.Visible = true;
         }
-        int osobaindex = 1, odeljenjeindex = 1, skolska_godinaIndex = 1;
+        int osobaindex = 1, odeljenjeindex = 1, skolska_godinaIndex = 1, smerIndex = 1, predmetIndex = 1;
         private void label8_Click(object sender, EventArgs e)
         {
 
@@ -140,6 +158,16 @@ namespace esDnevnik_Mat
             {
                 Skolska_godina(1);
                 skolska_godinaIndex = 1;
+            }
+            if (prikaz == "Smer")
+            {
+                Smer(1);
+                smerIndex = 1;
+            }
+            if (prikaz == "Predmet")
+            {
+                Predmet(1);
+                predmetIndex = 1;
             }
             button7.Enabled = false;
             button6.Enabled = false;
@@ -173,6 +201,20 @@ namespace esDnevnik_Mat
                 DataTable a = Konekcija.Unos("select count(id) from skolska_godina");
                 if (skolska_godinaIndex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
             }
+            if (prikaz == "Smer")
+            {
+                smerIndex++;
+                Smer(smerIndex);
+                DataTable a = Konekcija.Unos("select count(id) from smer");
+                if (smerIndex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
+            }
+            if (prikaz == "Predmet")
+            {
+                predmetIndex++;
+                Predmet(predmetIndex);
+                DataTable a = Konekcija.Unos("select count(id) from predmet");
+                if (predmetIndex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
+            }
             button6.Enabled = true;
             button7.Enabled = true;
         }
@@ -197,6 +239,18 @@ namespace esDnevnik_Mat
                 skolska_godinaIndex--;
                 Skolska_godina(skolska_godinaIndex);
                 if (skolska_godinaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
+            }
+            if (prikaz == "Smer")
+            {
+                smerIndex--;
+                Smer(smerIndex);
+                if (smerIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
+            }
+            if (prikaz == "Predmet")
+            {
+                predmetIndex--;
+                Predmet(predmetIndex);
+                if (predmetIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
             }
             button4.Enabled = true;
             button5.Enabled = true;
@@ -313,7 +367,7 @@ namespace esDnevnik_Mat
                 {
                     SqlCommand com = new SqlCommand();
                     com.Connection = Konekcija.Connect();
-                    com.CommandText = "delete from skolska_godina where id=(select top " + skolska_godinaIndex + " id from odeljenje except select top " + (skolska_godinaIndex - 1) + " id from odeljenje)";
+                    com.CommandText = "delete from skolska_godina where id=(select top " + skolska_godinaIndex + " id from skolska_godina except select top " + (skolska_godinaIndex - 1) + " id from skolska_godina)";
                     SqlConnection c = new SqlConnection(Konekcija.Veza());
                     c.Open();
                     com.Connection = c;
@@ -349,6 +403,91 @@ namespace esDnevnik_Mat
                     errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati skolsku godinu");
                 }
             }
+            if (prikaz == "Smer")
+            {
+                try
+                {
+                    SqlCommand com = new SqlCommand();
+                    com.Connection = Konekcija.Connect();
+                    com.CommandText = "delete from smer where id=(select top " + smerIndex + " id from smer except select top " + (smerIndex - 1) + " id from smer)";
+                    SqlConnection c = new SqlConnection(Konekcija.Veza());
+                    c.Open();
+                    com.Connection = c;
+                    com.ExecuteNonQuery();
+                    c.Close();
+                    DataTable a = new DataTable();
+                    a = Konekcija.Unos("select * from smer");
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    if (a.Rows.Count == 0)
+                    {
+                        textBox1.Text = "";
+                        textBox2.Text = "";
+                        button6.Enabled = false;
+                        button7.Enabled = false;
+                        button1.Enabled = false;
+                        button3.Enabled = false;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    smerIndex = 1;
+                    Smer(1);
+                }
+                catch
+                {
+                    errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati smer");
+                }
+            }
+            if (prikaz == "Predmet")
+            {
+                try
+                {
+                    SqlCommand com = new SqlCommand();
+                    com.Connection = Konekcija.Connect();
+                    com.CommandText = "delete from predmet where id=(select top " + predmetIndex + " id from predmet except select top " + (predmetIndex - 1) + " id from predmet)";
+                    SqlConnection c = new SqlConnection(Konekcija.Veza());
+                    c.Open();
+                    com.Connection = c;
+                    com.ExecuteNonQuery();
+                    c.Close();
+                    DataTable a = new DataTable();
+                    a = Konekcija.Unos("select * from predmet");
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    if (a.Rows.Count == 0)
+                    {
+                        textBox1.Text = "";
+                        textBox2.Text = "";
+                        textBox3.Text = "";
+                        button6.Enabled = false;
+                        button7.Enabled = false;
+                        button1.Enabled = false;
+                        button3.Enabled = false;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    predmetIndex = 1;
+                    Predmet(1);
+                }
+                catch
+                {
+                    errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati predmet");
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -358,10 +497,10 @@ namespace esDnevnik_Mat
             {
                 int n =Convert.ToInt32(textBox1.Text);
                 DataTable a = new DataTable();
-                a = Konekcija.Unos("select * from osoba where id="+n);
-                if (a.Rows.Count == 0)
+                a = Konekcija.Unos("select * from osoba where jmbg='"+textBox5.Text+"'");
+                if (a.Rows.Count != 0)
                 {
-                    errorProvider1.SetError(button1, "Ne postoji osoba sa takvim ID-jem");
+                    errorProvider1.SetError(button1, "Takva osoba vec postoji");
                 }
                 else
                 {
@@ -391,10 +530,13 @@ namespace esDnevnik_Mat
             {
                 int n = Convert.ToInt32(textBox1.Text);
                 DataTable a = new DataTable();
-                a = Konekcija.Unos("select * from odeljenje where id=" + n);
-                if (a.Rows.Count == 0)
+                a = Konekcija.Unos("select id from skolska_godina where naziv='" + comboBox4.Text + "'");
+                int god = (int)a.Rows[0][0];
+                a.Clear();
+                a = Konekcija.Unos("select * from odeljenje where razred='" + textBox2.Text + "' and indeks='" + textBox3.Text + "' and godina_id=" + god);
+                if (a.Rows.Count != 0 && a.Rows[0][0].ToString()!=textBox1.Text)
                 {
-                    errorProvider1.SetError(button1, "Ne postoji odeljenje sa takvim ID-jem");
+                    errorProvider1.SetError(button1, "Vec postoji takvo odeljenje");
                 }
                 else
                 {
@@ -420,6 +562,87 @@ namespace esDnevnik_Mat
                             "update odeljenje set smer_id=" + smer + " where id=" + n +
                             "update odeljenje set razredni_id=" + razredni + " where id=" + n +
                             "update odeljenje set godina_id=" + skolska + " where id=" + n;
+                        com.ExecuteNonQuery();
+                        c.Close();
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button1, "Uneti podaci nisu dobri");
+                    }
+                }
+            }
+            if (prikaz == "Skolska_godina")
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from skolska_godina where naziv='" + textBox2.Text + "'");
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button1, "Vec postoji takva skolska godina");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        SqlCommand com = new SqlCommand();
+                        com.Connection = c;
+                        com.CommandText = "update skolska_godina set naziv='" + textBox2.Text + "' where id=" + n;
+                        com.ExecuteNonQuery();
+                        c.Close();
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button1, "Uneti podaci nisu dobri");
+                    }
+                }
+            }
+            if (prikaz == "Smer")
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from smer where naziv='" + textBox2.Text + "'");
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button1, "Takav smer vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        SqlCommand com = new SqlCommand();
+                        com.Connection = c;
+                        com.CommandText = "update smer set naziv='" + textBox2.Text + "' where id=" + n;
+                        com.ExecuteNonQuery();
+                        c.Close();
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button1, "Uneti podaci nisu dobri");
+                    }
+                }
+            }
+            if (prikaz == "Predmet")
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from predmet where naziv='" + textBox2.Text + "' and razred=" + int.Parse(textBox3.Text));
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button1, "Takav predmet vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        SqlCommand com = new SqlCommand();
+                        com.Connection = c;
+                        com.CommandText = "update predmet set naziv='" + textBox2.Text + "', razred="+textBox3.Text+" where id=" + n;
                         com.ExecuteNonQuery();
                         c.Close();
                     }
@@ -489,7 +712,7 @@ namespace esDnevnik_Mat
                     {
                         SqlCommand com = new SqlCommand();
                         SqlConnection c = new SqlConnection(Konekcija.Veza());
-                        int smer = 1, razredni = 1, odeljenje = 1;
+                        int smer = 1, razredni = 1, godina = 1;
                         a = new DataTable();
                         a = Konekcija.Unos("select id from smer where naziv='" + comboBox2.Text + "'");
                         smer = (int)a.Rows[0][0];
@@ -499,9 +722,10 @@ namespace esDnevnik_Mat
                         razredni = (int)a.Rows[0][0];
                         a = new DataTable();
                         a = Konekcija.Unos("select id from skolska_godina where naziv='" + comboBox4.Text + "'");
+                        godina = (int)a.Rows[0][0];
                         c.Open();
                         com.Connection = c;
-                        com.CommandText = "insert into odeljenje values(" + Convert.ToInt32(textBox2.Text) + ",'" + textBox3.Text + "'," + smer + "," + razredni + "," + odeljenje + ")";
+                        com.CommandText = "insert into odeljenje values(" + Convert.ToInt32(textBox2.Text) + ",'" + textBox3.Text + "'," + smer + "," + razredni + "," + godina + ")";
                         com.ExecuteNonQuery();
                         c.Close();
                         button6.Enabled = true;
@@ -523,12 +747,11 @@ namespace esDnevnik_Mat
             }
             if (prikaz == "Skolska_godina")
             {
-                int n = Convert.ToInt32(textBox1.Text);
                 DataTable a = new DataTable();
-                a = Konekcija.Unos("select * from skolska_godina where id="+int.Parse(textBox1.Text));
+                a = Konekcija.Unos("select * from skolska_godina where naziv='"+textBox2.Text+"'");
                 if (a.Rows.Count != 0)
                 {
-                    errorProvider1.SetError(button2, "Odeljenje vec postoji");
+                    errorProvider1.SetError(button2, "Skolska godina vec postoji");
                 }
                 else
                 {
@@ -551,6 +774,78 @@ namespace esDnevnik_Mat
                         a = Konekcija.Unos("select * from skolska_godina");
                         skolska_godinaIndex = (int)a.Rows.Count;
                         Skolska_godina(skolska_godinaIndex);
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button2, "Uneti podaci nisu dobri");
+                    }
+                }
+            }
+            if (prikaz == "Smer")
+            {
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from smer where naziv='" + textBox2.Text + "'");
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button2, "Smer vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlCommand com = new SqlCommand();
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        com.Connection = c;
+                        com.CommandText = "insert into smer values('" + textBox2.Text + "')";
+                        com.ExecuteNonQuery();
+                        c.Close();
+                        button6.Enabled = true;
+                        button7.Enabled = true;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                        button1.Enabled = true;
+                        button3.Enabled = true;
+                        a = new DataTable();
+                        a = Konekcija.Unos("select * from smer");
+                        smerIndex = (int)a.Rows.Count;
+                        Smer(smerIndex);
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button2, "Uneti podaci nisu dobri");
+                    }
+                }
+            }
+            if (prikaz == "Predmet")
+            {
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from predmet where naziv='" + textBox2.Text + "' and razred=" + int.Parse(textBox3.Text));
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button2, "Predmet vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlCommand com = new SqlCommand();
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        com.Connection = c;
+                        com.CommandText = "insert into predmet values('" + textBox2.Text + "'," + textBox3.Text + ")";
+                        com.ExecuteNonQuery();
+                        c.Close();
+                        button6.Enabled = true;
+                        button7.Enabled = true;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                        button1.Enabled = true;
+                        button3.Enabled = true;
+                        a = new DataTable();
+                        a = Konekcija.Unos("select * from predmet");
+                        predmetIndex = (int)a.Rows.Count;
+                        Predmet(predmetIndex);
                     }
                     catch
                     {
@@ -602,6 +897,7 @@ namespace esDnevnik_Mat
                 label10.Text = "Lozinka";
                 label11.Text = "Uloga";
                 Osoba(1);
+                osobaindex = 1;
             }
             if (a.Rows.Count==1)
             {
@@ -657,15 +953,16 @@ namespace esDnevnik_Mat
                 comboBox2.Items.Clear();
                 comboBox3.Items.Clear();
                 comboBox4.Items.Clear();
-                comboBox2.Items.Add("Informaticki");
-                comboBox2.Items.Add("Prirodni");
-                comboBox2.Items.Add("Drustveni");
                 DataTable c = new DataTable();
                 c = Konekcija.Unos("Select naziv from skolska_godina");
                 for (int i = 0; i < c.Rows.Count; i++) comboBox4.Items.Add(c.Rows[i][0]);
                 a = Konekcija.Unos("select ime,prezime from osoba where uloga=2");
                 for (int i = 0; i < a.Rows.Count; i++) comboBox3.Items.Add(a.Rows[i][0] + " " + a.Rows[i][1]);
+                c = new DataTable();
+                c = Konekcija.Unos("select naziv from smer");
+                for (int i = 0; i < c.Rows.Count; i++) comboBox2.Items.Add(c.Rows[i][0]);
                 Odeljenje(1);
+                odeljenjeindex = 1;
             }
             if (b.Rows.Count == 1)
             {
@@ -678,9 +975,110 @@ namespace esDnevnik_Mat
             }
         }
 
+        private void predmetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            prikaz = "Predmet";
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select * from predmet");
+            if (a.Rows.Count >= 1)
+            {
+                button1.Enabled = true;
+                button2.Enabled = true;
+                button3.Enabled = true;
+                button4.Enabled = true;
+                button5.Enabled = true;
+                comboBox2.Visible = false;
+                comboBox3.Visible = false;
+                comboBox4.Visible = false;
+                label4.Visible = false;
+                label5.Visible = false;
+                label6.Visible = false;
+                label1.Visible = true;
+                label2.Visible = true;
+                label3.Visible = true;
+                label7.Visible = false;
+                label8.Visible = false;
+                label9.Visible = false;
+                label10.Visible = false;
+                label11.Visible = false;
+                textBox1.Visible = true;
+                textBox2.Visible = true;
+                textBox3.Visible = true;
+                textBox4.Visible = false;
+                textBox5.Visible = false;
+                textBox6.Visible = false;
+                textBox7.Visible = false;
+                textBox8.Visible = false;
+                label1.Text = "ID";
+                label2.Text = "Naziv";
+                label3.Text = "Razred";
+                Predmet(1);
+                predmetIndex = 1;
+            }
+            if (a.Rows.Count == 1)
+            {
+                button4.Enabled = false;
+                button5.Enabled = false;
+            }
+            if (a.Rows.Count == 0)
+            {
+                MessageBox.Show("Nema smerova u bazi");
+            }
+        }
+
+        private void smerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            prikaz = "Smer";
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select * from smer");
+            if (a.Rows.Count >= 1)
+            {
+                button1.Enabled = true;
+                button2.Enabled = true;
+                button3.Enabled = true;
+                button4.Enabled = true;
+                button5.Enabled = true;
+                comboBox2.Visible = false;
+                comboBox3.Visible = false;
+                comboBox4.Visible = false;
+                label4.Visible = false;
+                label5.Visible = false;
+                label6.Visible = false;
+                label1.Visible = true;
+                label2.Visible = true;
+                label3.Visible = false;
+                label7.Visible = false;
+                label8.Visible = false;
+                label9.Visible = false;
+                label10.Visible = false;
+                label11.Visible = false;
+                textBox1.Visible = true;
+                textBox2.Visible = true;
+                textBox3.Visible = false;
+                textBox4.Visible = false;
+                textBox5.Visible = false;
+                textBox6.Visible = false;
+                textBox7.Visible = false;
+                textBox8.Visible = false;
+                label1.Text = "ID";
+                label2.Text = "Naziv";
+                Smer(1);
+                smerIndex = 1;
+            }
+            if (a.Rows.Count == 1)
+            {
+                button4.Enabled = false;
+                button5.Enabled = false;
+            }
+            if (a.Rows.Count == 0)
+            {
+                MessageBox.Show("Nema smerova u bazi");
+            }
+        }
+
         private void skolskaGodinaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            prikaz = "Skolska godina";
+            prikaz = "Skolska_godina";
             DataTable a = new DataTable();
             a = Konekcija.Unos("select * from skolska_godina"); 
             if (a.Rows.Count >= 1)
@@ -715,6 +1113,7 @@ namespace esDnevnik_Mat
                 label1.Text = "ID";
                 label2.Text = "Naziv";
                 Skolska_godina(1);
+                skolska_godinaIndex = 1;
             }
             if (a.Rows.Count == 1)
             {
@@ -750,6 +1149,20 @@ namespace esDnevnik_Mat
                 x = Konekcija.Unos("select count(id) from skolska_godina");
                 Skolska_godina((int)x.Rows[0][0]);
                 skolska_godinaIndex = (int)x.Rows[0][0];
+            }
+            if (prikaz == "Smer")
+            {
+                DataTable x = new DataTable();
+                x = Konekcija.Unos("select count(id) from smer");
+                Smer((int)x.Rows[0][0]);
+                smerIndex = (int)x.Rows[0][0];
+            }
+            if (prikaz == "Predmet")
+            {
+                DataTable x = new DataTable();
+                x = Konekcija.Unos("select count(id) from predmet");
+                Predmet((int)x.Rows[0][0]);
+                predmetIndex = (int)x.Rows[0][0];
             }
             button5.Enabled = false;
             button4.Enabled = false;

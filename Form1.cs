@@ -103,13 +103,21 @@ namespace esDnevnik_Mat
             textBox8.Text = a.Rows[0][7].ToString();
         }
 
+        public void Skolska_godina(int id)
+        {
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select top " + id + " * from skolska_godina except select top " + (id - 1) + " * from skolska_godina");
+            textBox1.Text = a.Rows[0][0].ToString();
+            textBox2.Text = a.Rows[0][1].ToString();
+        }
+
         private void label4_Click(object sender, EventArgs e)
         {
             label1.Visible = true;
             label2.Visible = true;
             label3.Visible = true;
         }
-        int osobaindex = 1, odeljenjeindex = 1;
+        int osobaindex = 1, odeljenjeindex = 1, skolska_godinaIndex = 1;
         private void label8_Click(object sender, EventArgs e)
         {
 
@@ -123,10 +131,15 @@ namespace esDnevnik_Mat
                 Odeljenje(1);
                 odeljenjeindex = 1;
             }
-            else
+            if (prikaz == "Osoba")
             {
                 Osoba(1);
                 osobaindex = 1;
+            }
+            if (prikaz == "Skolska_godina")
+            {
+                Skolska_godina(1);
+                skolska_godinaIndex = 1;
             }
             button7.Enabled = false;
             button6.Enabled = false;
@@ -145,13 +158,20 @@ namespace esDnevnik_Mat
                 a = Konekcija.Unos("select count(id) from odeljenje");
                 if (odeljenjeindex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
             }
-            else
+            if (prikaz == "Osoba")
             {
                 osobaindex++;
                 Osoba(osobaindex);
                 DataTable a = new DataTable();
                 a = Konekcija.Unos("select count(id) from osoba");
                 if (osobaindex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
+            }
+            if (prikaz == "Skolska_godina")
+            {
+                skolska_godinaIndex++;
+                Skolska_godina(skolska_godinaIndex);
+                DataTable a = Konekcija.Unos("select count(id) from skolska_godina");
+                if (skolska_godinaIndex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
             }
             button6.Enabled = true;
             button7.Enabled = true;
@@ -166,11 +186,17 @@ namespace esDnevnik_Mat
                 Odeljenje(odeljenjeindex);
                 if (odeljenjeindex == 1) { button6.Enabled = false; button7.Enabled = false; }
             }
-            else
+            if (prikaz == "Osoba")
             {
                 osobaindex--;
                 Osoba(osobaindex);
                 if (osobaindex == 1) { button6.Enabled = false; button7.Enabled = false; }
+            }
+            if (prikaz == "Skolska_godina")
+            {
+                skolska_godinaIndex--;
+                Skolska_godina(skolska_godinaIndex);
+                if (skolska_godinaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
             }
             button4.Enabled = true;
             button5.Enabled = true;
@@ -235,7 +261,7 @@ namespace esDnevnik_Mat
 
                 }
             }
-            else
+            if (prikaz == "Odeljenje")
             {
                 try
                 {
@@ -281,6 +307,48 @@ namespace esDnevnik_Mat
                     errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati odeljenje");
                 }
             }
+            if (prikaz == "Skolska_godina")
+            {
+                try
+                {
+                    SqlCommand com = new SqlCommand();
+                    com.Connection = Konekcija.Connect();
+                    com.CommandText = "delete from skolska_godina where id=(select top " + skolska_godinaIndex + " id from odeljenje except select top " + (skolska_godinaIndex - 1) + " id from odeljenje)";
+                    SqlConnection c = new SqlConnection(Konekcija.Veza());
+                    c.Open();
+                    com.Connection = c;
+                    com.ExecuteNonQuery();
+                    c.Close();
+                    DataTable a = new DataTable();
+                    a = Konekcija.Unos("select * from skolska_godina");
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    if (a.Rows.Count == 0)
+                    {
+                        textBox1.Text = "";
+                        textBox2.Text = "";
+                        button6.Enabled = false;
+                        button7.Enabled = false;
+                        button1.Enabled = false;
+                        button3.Enabled = false;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    skolska_godinaIndex = 1;
+                    Skolska_godina(1);
+                }
+                catch
+                {
+                    errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati skolsku godinu");
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -319,7 +387,7 @@ namespace esDnevnik_Mat
                     }
                 }
             }
-            else
+            if (prikaz == "Odeljenje")
             {
                 int n = Convert.ToInt32(textBox1.Text);
                 DataTable a = new DataTable();
@@ -403,7 +471,7 @@ namespace esDnevnik_Mat
                     }
                 }
             }
-            else
+            if (prikaz == "Odeljenje")
             {
                 int n = Convert.ToInt32(textBox1.Text);
                 DataTable a = new DataTable();
@@ -446,6 +514,43 @@ namespace esDnevnik_Mat
                         a = Konekcija.Unos("select * from odeljenje");
                         odeljenjeindex = (int)a.Rows.Count;
                         Odeljenje(odeljenjeindex);
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button2, "Uneti podaci nisu dobri");
+                    }
+                }
+            }
+            if (prikaz == "Skolska_godina")
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from skolska_godina where id="+int.Parse(textBox1.Text));
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button2, "Odeljenje vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlCommand com = new SqlCommand();
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());                     
+                        c.Open();
+                        com.Connection = c;
+                        com.CommandText = "insert into skolska_godina values('" + textBox2.Text +"')";
+                        com.ExecuteNonQuery();
+                        c.Close();
+                        button6.Enabled = true;
+                        button7.Enabled = true;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                        button1.Enabled = true;
+                        button3.Enabled = true;
+                        a = new DataTable();
+                        a = Konekcija.Unos("select * from skolska_godina");
+                        skolska_godinaIndex = (int)a.Rows.Count;
+                        Skolska_godina(skolska_godinaIndex);
                     }
                     catch
                     {
@@ -573,6 +678,55 @@ namespace esDnevnik_Mat
             }
         }
 
+        private void skolskaGodinaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            prikaz = "Skolska godina";
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select * from skolska_godina"); 
+            if (a.Rows.Count >= 1)
+            {
+                button1.Enabled = true;
+                button2.Enabled = true;
+                button3.Enabled = true;
+                button4.Enabled = true;
+                button5.Enabled = true;
+                comboBox2.Visible = false;
+                comboBox3.Visible = false;
+                comboBox4.Visible = false;
+                label4.Visible = false;
+                label5.Visible = false;
+                label6.Visible = false;
+                label1.Visible = true;
+                label2.Visible = true;
+                label3.Visible = false;
+                label7.Visible = false;
+                label8.Visible = false;
+                label9.Visible = false;
+                label10.Visible = false;
+                label11.Visible = false;
+                textBox1.Visible = true;
+                textBox2.Visible = true;
+                textBox3.Visible = false;
+                textBox4.Visible = false;
+                textBox5.Visible = false;
+                textBox6.Visible = false;
+                textBox7.Visible = false;
+                textBox8.Visible = false;
+                label1.Text = "ID";
+                label2.Text = "Naziv";
+                Skolska_godina(1);
+            }
+            if (a.Rows.Count == 1)
+            {
+                button4.Enabled = false;
+                button5.Enabled = false;
+            }
+            if (a.Rows.Count == 0)
+            {
+                MessageBox.Show("Nema odeljenja u bazi");
+            }
+        }
+
         private void button5_Click(object sender, EventArgs e)
         {
             errorProvider1.Clear();
@@ -583,12 +737,19 @@ namespace esDnevnik_Mat
                 Odeljenje((int)c.Rows[0][0]);
                 odeljenjeindex = (int)c.Rows[0][0];
             }
-            else
+            if (prikaz == "Osoba")
             {
                 DataTable x= new DataTable();
                 x = Konekcija.Unos("select count(id) from osoba");
                 Osoba((int)x.Rows[0][0]);
                 osobaindex = (int)x.Rows[0][0];
+            }
+            if (prikaz == "Skolska_godina")
+            {
+                DataTable x = new DataTable();
+                x = Konekcija.Unos("select count(id) from skolska_godina");
+                Skolska_godina((int)x.Rows[0][0]);
+                skolska_godinaIndex = (int)x.Rows[0][0];
             }
             button5.Enabled = false;
             button4.Enabled = false;

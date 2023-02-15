@@ -62,11 +62,11 @@ namespace esDnevnik_Mat
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.sifarniciToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.odeljenjaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.osobaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.skolskaGodinaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.predmetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.odeljenjaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.odeljenjeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -349,14 +349,6 @@ namespace esDnevnik_Mat
             this.sifarniciToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
             this.sifarniciToolStripMenuItem.Text = "Sifarnici  ▼";
             // 
-            // odeljenjaToolStripMenuItem
-            // 
-            this.odeljenjaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.odeljenjeToolStripMenuItem});
-            this.odeljenjaToolStripMenuItem.Name = "odeljenjaToolStripMenuItem";
-            this.odeljenjaToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
-            this.odeljenjaToolStripMenuItem.Text = "Odeljenja  ▼";
-            // 
             // osobaToolStripMenuItem
             // 
             this.osobaToolStripMenuItem.Name = "osobaToolStripMenuItem";
@@ -369,6 +361,7 @@ namespace esDnevnik_Mat
             this.skolskaGodinaToolStripMenuItem.Name = "skolskaGodinaToolStripMenuItem";
             this.skolskaGodinaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.skolskaGodinaToolStripMenuItem.Text = "Skolska godina";
+            this.skolskaGodinaToolStripMenuItem.Click += new System.EventHandler(this.skolskaGodinaToolStripMenuItem_Click);
             // 
             // smerToolStripMenuItem
             // 
@@ -382,10 +375,18 @@ namespace esDnevnik_Mat
             this.predmetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.predmetToolStripMenuItem.Text = "Predmet";
             // 
+            // odeljenjaToolStripMenuItem
+            // 
+            this.odeljenjaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.odeljenjeToolStripMenuItem});
+            this.odeljenjaToolStripMenuItem.Name = "odeljenjaToolStripMenuItem";
+            this.odeljenjaToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.odeljenjaToolStripMenuItem.Text = "Odeljenja  ▼";
+            // 
             // odeljenjeToolStripMenuItem
             // 
             this.odeljenjeToolStripMenuItem.Name = "odeljenjeToolStripMenuItem";
-            this.odeljenjeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.odeljenjeToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.odeljenjeToolStripMenuItem.Text = "Odeljenje";
             this.odeljenjeToolStripMenuItem.Click += new System.EventHandler(this.odeljenjeToolStripMenuItem_Click);
             // 

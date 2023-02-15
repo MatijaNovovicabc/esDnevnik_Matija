@@ -70,7 +70,6 @@ namespace esDnevnik_Mat
             button6.Enabled = false;
             button7.Enabled = false;
             textBox1.Enabled = false;
-            int alfa = 0;
         }
         string prikaz = "";
         public void Odeljenje(int id)

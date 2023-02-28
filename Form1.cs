@@ -1468,8 +1468,6 @@ namespace esDnevnik_Mat
                 {
                     upisnicaIndex = 0;
                     MessageBox.Show("Nema raspodela u bazi");
-                    comboBox1.Text = "";
-                    comboBox5.Text = "";
                     textBox6.Enabled = true;
                     textBox3.Enabled = true;
                     comboBox1.Items.Clear();
@@ -1518,7 +1516,7 @@ namespace esDnevnik_Mat
                     comboBox2.Text = "";
                     comboBox3.Text = "";
                     comboBox6.Text = "";
-                    comboBox2.Text = "";
+                    comboBox7.Text = "";
                     textBox1.Text = "";
                     comboBox7.Items.Clear();
                     comboBox6.Items.Clear();
@@ -2112,7 +2110,6 @@ namespace esDnevnik_Mat
                         label4.Visible = true;
                         label5.Visible = true;
                         label6.Visible = true;
-                        label7.Visible = true;
                         textBox2.Text = "";
                         textBox3.Text = "";
                         textBox5.Text = "";

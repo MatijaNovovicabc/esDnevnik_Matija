@@ -68,13 +68,15 @@ namespace esDnevnik_Mat
             this.odeljenjaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.odeljenjeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.upisnicaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.raspodelaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label12 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.upisnicaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.raspodelaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.comboBox6 = new System.Windows.Forms.ComboBox();
+            this.comboBox7 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -105,7 +107,7 @@ namespace esDnevnik_Mat
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(308, 77);
+            this.label2.Location = new System.Drawing.Point(305, 77);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 3;
@@ -130,7 +132,7 @@ namespace esDnevnik_Mat
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(308, 131);
+            this.label4.Location = new System.Drawing.Point(303, 131);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 7;
@@ -156,7 +158,7 @@ namespace esDnevnik_Mat
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(300, 159);
+            this.label5.Location = new System.Drawing.Point(298, 159);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(35, 13);
             this.label5.TabIndex = 9;
@@ -389,16 +391,30 @@ namespace esDnevnik_Mat
             // odeljenjeToolStripMenuItem
             // 
             this.odeljenjeToolStripMenuItem.Name = "odeljenjeToolStripMenuItem";
-            this.odeljenjeToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.odeljenjeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.odeljenjeToolStripMenuItem.Text = "Odeljenje";
             this.odeljenjeToolStripMenuItem.Click += new System.EventHandler(this.odeljenjeToolStripMenuItem_Click);
             // 
             // oceneToolStripMenuItem
             // 
             this.oceneToolStripMenuItem.Name = "oceneToolStripMenuItem";
-            this.oceneToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.oceneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.oceneToolStripMenuItem.Text = "Ocene";
             this.oceneToolStripMenuItem.Click += new System.EventHandler(this.oceneToolStripMenuItem_Click);
+            // 
+            // upisnicaToolStripMenuItem
+            // 
+            this.upisnicaToolStripMenuItem.Name = "upisnicaToolStripMenuItem";
+            this.upisnicaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.upisnicaToolStripMenuItem.Text = "Upisnica";
+            this.upisnicaToolStripMenuItem.Click += new System.EventHandler(this.upisnicaToolStripMenuItem_Click);
+            // 
+            // raspodelaToolStripMenuItem
+            // 
+            this.raspodelaToolStripMenuItem.Name = "raspodelaToolStripMenuItem";
+            this.raspodelaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.raspodelaToolStripMenuItem.Text = "Raspodela";
+            this.raspodelaToolStripMenuItem.Click += new System.EventHandler(this.raspodelaToolStripMenuItem_Click);
             // 
             // label12
             // 
@@ -446,24 +462,29 @@ namespace esDnevnik_Mat
             this.comboBox4.Size = new System.Drawing.Size(145, 21);
             this.comboBox4.TabIndex = 12;
             // 
-            // upisnicaToolStripMenuItem
+            // comboBox6
             // 
-            this.upisnicaToolStripMenuItem.Name = "upisnicaToolStripMenuItem";
-            this.upisnicaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.upisnicaToolStripMenuItem.Text = "Upisnica";
-            this.upisnicaToolStripMenuItem.Click += new System.EventHandler(this.upisnicaToolStripMenuItem_Click);
+            this.comboBox6.FormattingEnabled = true;
+            this.comboBox6.Location = new System.Drawing.Point(349, 99);
+            this.comboBox6.Name = "comboBox6";
+            this.comboBox6.Size = new System.Drawing.Size(145, 21);
+            this.comboBox6.TabIndex = 35;
             // 
-            // raspodelaToolStripMenuItem
+            // comboBox7
             // 
-            this.raspodelaToolStripMenuItem.Name = "raspodelaToolStripMenuItem";
-            this.raspodelaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.raspodelaToolStripMenuItem.Text = "Raspodela";
+            this.comboBox7.FormattingEnabled = true;
+            this.comboBox7.Location = new System.Drawing.Point(349, 74);
+            this.comboBox7.Name = "comboBox7";
+            this.comboBox7.Size = new System.Drawing.Size(145, 21);
+            this.comboBox7.TabIndex = 36;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(928, 450);
+            this.Controls.Add(this.comboBox7);
+            this.Controls.Add(this.comboBox6);
             this.Controls.Add(this.comboBox5);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.comboBox1);
@@ -555,6 +576,8 @@ namespace esDnevnik_Mat
         private System.Windows.Forms.ComboBox comboBox4;
         private System.Windows.Forms.ToolStripMenuItem upisnicaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem raspodelaToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBox6;
+        private System.Windows.Forms.ComboBox comboBox7;
     }
 }
 

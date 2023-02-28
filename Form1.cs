@@ -65,6 +65,8 @@ namespace esDnevnik_Mat
             comboBox2.Visible = false;
             comboBox3.Visible = false;
             comboBox4.Visible = false;
+            comboBox6.Visible = false;
+            comboBox7.Visible = false;
             button1.Enabled = false;
             button2.Enabled = false;
             button3.Enabled = false;
@@ -148,17 +150,26 @@ namespace esDnevnik_Mat
             DataTable a = new DataTable();
             a = Konekcija.Unos("select top " + id +  " Upisnica.id, Osoba.ime + ' ' + Osoba.prezime, Odeljenje.razred,Odeljenje.indeks,Skolska_godina.naziv from upisnica join osoba on Upisnica.osoba_id=Osoba.id join Odeljenje on Upisnica.odeljenje_id=Odeljenje.id join Skolska_godina on Odeljenje.godina_id=Skolska_godina.id except select top " + (id - 1) + " Upisnica.id, Osoba.ime + ' ' + Osoba.prezime, Odeljenje.razred,Odeljenje.indeks,Skolska_godina.naziv from upisnica join osoba on Upisnica.osoba_id=Osoba.id join Odeljenje on Upisnica.odeljenje_id=Odeljenje.id join Skolska_godina on Odeljenje.godina_id=Skolska_godina.id");
             textBox1.Text = a.Rows[0][0].ToString();
-            textBox2.Text = a.Rows[0][1].ToString();
-            textBox3.Text = a.Rows[0][2].ToString() + " / " +a.Rows[0][3].ToString() + " / " + a.Rows[0][4].ToString();
+            comboBox7.Text = a.Rows[0][1].ToString();
+            comboBox6.Text = a.Rows[0][2].ToString() + " / " +a.Rows[0][3].ToString() + " / " + a.Rows[0][4].ToString();
         }
-
+        public void Raspodela(int id)
+        {
+            DataTable a = new DataTable();
+            a = Konekcija.Unos("select top "+id+" raspodela.id, osoba.ime + ' ' +Osoba.prezime, Skolska_godina.naziv,Predmet.naziv,Odeljenje.razred,Odeljenje.indeks from Raspodela join Osoba on Raspodela.nastavnik_id=Osoba.id join Predmet on Raspodela.predmet_id=Predmet.id join Skolska_godina on Raspodela.godina_id=Skolska_godina.id join Odeljenje on Raspodela.odeljenje_id=Odeljenje.id except select top " + (id-1) + " raspodela.id, osoba.ime + ' ' +Osoba.prezime, Skolska_godina.naziv,Predmet.naziv,Odeljenje.razred,Odeljenje.indeks from Raspodela join Osoba on Raspodela.nastavnik_id=Osoba.id join Predmet on Raspodela.predmet_id=Predmet.id join Skolska_godina on Raspodela.godina_id=Skolska_godina.id join Odeljenje on Raspodela.odeljenje_id=Odeljenje.id");
+            textBox1.Text = a.Rows[0][0].ToString();
+            comboBox7.Text = a.Rows[0][1].ToString();
+            comboBox6.Text = a.Rows[0][2].ToString();
+            comboBox2.Text = a.Rows[0][3].ToString();
+            comboBox3.Text = a.Rows[0][4].ToString() + " / "+ a.Rows[0][5].ToString();
+        }
         private void label4_Click(object sender, EventArgs e)
         {
             label1.Visible = true;
             label2.Visible = true;
             label3.Visible = true;
         }
-        int osobaindex = 1, odeljenjeindex = 1, skolska_godinaIndex = 1, smerIndex = 1, predmetIndex = 1, ocenaIndex = 1,upisnicaIndex, odeljenjeID, predmetID;
+        int osobaindex = 1, odeljenjeindex = 1, skolska_godinaIndex = 1, smerIndex = 1, predmetIndex = 1, ocenaIndex = 1,upisnicaIndex, raspodelaIndex, odeljenjeID, predmetID;
         DataTable Odeljenja, Predmeti, Ocene1, Ocene2,Ucenici;
 
         private void button7_Click(object sender, EventArgs e)
@@ -198,6 +209,11 @@ namespace esDnevnik_Mat
             {
                 Upisnica(1);
                 upisnicaIndex = 1;
+            }
+            if (prikaz == "Raspodela")
+            {
+                Raspodela(1);
+                raspodelaIndex = 1;
             }
             button7.Enabled = false;
             button6.Enabled = false;
@@ -256,7 +272,14 @@ namespace esDnevnik_Mat
                 upisnicaIndex++;
                 Upisnica(upisnicaIndex);
                 DataTable a = Konekcija.Unos("select count(id) from upisnica");
-                if (upisnicaIndex == a.Rows.Count) { button4.Enabled = false; button5.Enabled = false; }
+                if (upisnicaIndex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
+            }
+            if (prikaz == "Raspodela")
+            {
+                raspodelaIndex++;
+                Raspodela(raspodelaIndex);
+                DataTable a = Konekcija.Unos("select count(id) from raspodela");
+                if (raspodelaIndex == (int)a.Rows[0][0]) { button4.Enabled = false; button5.Enabled = false; }
             }
             button6.Enabled = true;
             button7.Enabled = true;
@@ -306,6 +329,12 @@ namespace esDnevnik_Mat
                 upisnicaIndex--;
                 Upisnica(upisnicaIndex);
                 if (upisnicaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
+            }
+            if (prikaz == "Raspodela")
+            {
+                raspodelaIndex--;
+                Raspodela(raspodelaIndex);
+                if (raspodelaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
             }
             button4.Enabled = true;
             button5.Enabled = true;
@@ -364,6 +393,11 @@ namespace esDnevnik_Mat
                         Osoba(1);
                         osobaindex = 1;
                     }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
                 }
                 catch
                 {
@@ -413,6 +447,11 @@ namespace esDnevnik_Mat
                         odeljenjeindex = 1;
                         Odeljenje(1);
                     }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
 
                 }
                 catch
@@ -458,6 +497,11 @@ namespace esDnevnik_Mat
                         skolska_godinaIndex = 1;
                         Skolska_godina(1);
                     }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
                 }
                 catch
                 {
@@ -501,6 +545,11 @@ namespace esDnevnik_Mat
                         button5.Enabled = true;
                         smerIndex = 1;
                         Smer(1);
+                    }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
                     }
                 }
                 catch
@@ -547,6 +596,11 @@ namespace esDnevnik_Mat
                         predmetIndex = 1;
                         Predmet(1);
                     }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
                 }
                 catch
                 {
@@ -559,7 +613,7 @@ namespace esDnevnik_Mat
                 {
                     SqlCommand com = new SqlCommand();
                     com.Connection = Konekcija.Connect();
-                    com.CommandText = "delete from ocena where id="+Convert.ToInt64(textBox2.Text);
+                    com.CommandText = "delete from ocena where id=" + Convert.ToInt64(textBox2.Text);
                     SqlConnection c = new SqlConnection(Konekcija.Veza());
                     c.Open();
                     com.Connection = c;
@@ -596,10 +650,117 @@ namespace esDnevnik_Mat
                         ocenaIndex = 1;
                         Ocena(1);
                     }
+                    if (Ocene1.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
                 }
                 catch
                 {
                     errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati predmet");
+                }
+            }
+            if (prikaz == "Upisnica")
+            {
+                try
+                {
+                    SqlCommand com = new SqlCommand();
+                    com.Connection = Konekcija.Connect();
+                    com.CommandText = "delete from upisnica where id="+ textBox1.Text;
+                    SqlConnection c = new SqlConnection(Konekcija.Veza());
+                    c.Open();
+                    com.Connection = c;
+                    com.ExecuteNonQuery();
+                    c.Close();
+                    DataTable a = new DataTable();
+                    a = Konekcija.Unos("select * from upisnica");
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    upisnicaIndex = 1;
+                    if (a.Rows.Count == 0)
+                    {
+                        upisnicaIndex = 0;
+                        textBox1.Text = "";
+                        comboBox6.Text = "";
+                        comboBox7.Text = "";
+                        button6.Enabled = false;
+                        button7.Enabled = false;
+                        button1.Enabled = false;
+                        button3.Enabled = false;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    if (a.Rows.Count >= 1)
+                    {
+                        button4.Enabled = true;
+                        button5.Enabled = true;
+                        upisnicaIndex = 1;
+                        Upisnica(1);
+                    }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                }
+                catch
+                {
+                    errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati upisnicu");
+                }
+            }
+            if (prikaz == "Raspodela")
+            {
+                try
+                {
+                    SqlCommand com = new SqlCommand();
+                    com.Connection = Konekcija.Connect();
+                    com.CommandText = "delete from raspodela where id=" + textBox1.Text;
+                    SqlConnection c = new SqlConnection(Konekcija.Veza());
+                    c.Open();
+                    com.Connection = c;
+                    com.ExecuteNonQuery();
+                    c.Close();
+                    DataTable a = new DataTable();
+                    a = Konekcija.Unos("select * from raspodela");
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    raspodelaIndex = 1;
+                    if (a.Rows.Count == 0)
+                    {
+                        raspodelaIndex = 0;
+                        textBox1.Text = "";
+                        comboBox2.Text = "";
+                        comboBox3.Text = "";
+                        comboBox6.Text = "";
+                        comboBox7.Text = "";
+                        button6.Enabled = false;
+                        button7.Enabled = false;
+                        button1.Enabled = false;
+                        button3.Enabled = false;
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                    if (a.Rows.Count >= 1)
+                    {
+                        button4.Enabled = true;
+                        button5.Enabled = true;
+                        raspodelaIndex = 1;
+                        Raspodela(1);
+                    }
+                    if (a.Rows.Count == 1)
+                    {
+                        button4.Enabled = false;
+                        button5.Enabled = false;
+                    }
+                }
+                catch
+                {
+                    errorProvider1.SetError(button3, "Trenutno nije moguce izbrisati raspodelu");
                 }
             }
         }
@@ -790,6 +951,72 @@ namespace esDnevnik_Mat
                 {
                     errorProvider1.SetError(button1, "Uneti podaci nisu dobri");
                 }
+            }
+            if (prikaz == "Upisnica")
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                DataTable a, b, k = new DataTable();
+                string[] s = comboBox7.Text.Split(' ');
+                b = Konekcija.Unos("select id from osoba where ime='" + s[0] + "' and prezime ='" + s[1] + "' and uloga = 1");
+                string[] f = comboBox6.Text.Split('/');
+                k = Konekcija.Unos("select odeljenje.id from odeljenje join skolska_godina on odeljenje.godina_id=skolska_godina.id where odeljenje.razred=" + f[0].Trim() + " and odeljenje.indeks ='" + f[1].Trim() + "' and skolska_godina.naziv='" + f[2].Trim() + "/" + f[3].Trim() + "'");
+                a = Konekcija.Unos("select * from upisnica where osoba_id=" + b.Rows[0][0] + " and odeljenje_id=" + k.Rows[0][0]);
+                if (a.Rows.Count!=0)
+                {
+                    errorProvider1.SetError(button1, "Takva upisnica vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        SqlCommand com = new SqlCommand();
+                        com.Connection = c;
+                        com.CommandText = "update upisnica set osoba_id='" + b.Rows[0][0] + "', odeljenje_id=" + k.Rows[0][0] + " where id=" + n;
+                        com.ExecuteNonQuery();
+                        c.Close();
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button1, "Uneti podaci nisu dobri");
+                    }
+                }
+
+            }
+            if (prikaz == "Raspodela")
+            {
+                int n = Convert.ToInt32(textBox1.Text);
+                DataTable a, id1, id2, id3, id4 = new DataTable();
+                string[] s = comboBox7.Text.Split(' ');
+                id1 = Konekcija.Unos("select id from osoba where osoba.ime='" + s[0] + "' and osoba.prezime ='" + s[1] + "' and uloga=2");
+                id2 = Konekcija.Unos("select id from skolska_godina where naziv ='" + comboBox6.Text + "'");
+                id3 = Konekcija.Unos("select id from predmet where naziv ='" + comboBox2.Text + "'");
+                s = comboBox3.Text.Split('/');
+                id4 = Konekcija.Unos("select id from odeljenje where razred=" + s[0].Trim() + " and indeks ='" + s[1].Trim() + "' and godina_id=" + id2.Rows[0][0]);
+                a = Konekcija.Unos("select * from raspodela where nastavnik_id=" + id1.Rows[0][0] + " and godina_id=" + id2.Rows[0][0] + " and predmet_id=" + id3.Rows[0][0] + " and odeljenje_id=" + id4.Rows[0][0]);
+                if (a.Rows.Count != 0)
+                {
+                    errorProvider1.SetError(button1, "Takva raspodela vec postoji");
+                }
+                else
+                {
+                    try
+                    {
+                        SqlConnection c = new SqlConnection(Konekcija.Veza());
+                        c.Open();
+                        SqlCommand com = new SqlCommand();
+                        com.Connection = c;
+                        com.CommandText = "update raspodela set nastavnik_id='" + id1.Rows[0][0] + "', godina_id=" + id2.Rows[0][0] + ", predmet_id=" + id3.Rows[0][0] + ", odeljenje_id=" + id4.Rows[0][0] + " where id=" + n;
+                        com.ExecuteNonQuery();
+                        c.Close();
+                    }
+                    catch
+                    {
+                        errorProvider1.SetError(button1, "Uneti podaci nisu dobri");
+                    }
+                }
+
             }
         }
 
@@ -1059,12 +1286,21 @@ namespace esDnevnik_Mat
             {
                 try
                 {
-                    DataTable a = new DataTable();
-                    string[] s = textBox2.Text.Split(' ');
+                    int osobaID, odeljenjeID;
+                    DataTable a,b,k = new DataTable();
+                    string[] s = comboBox7.Text.Split(' ');
                     a = Konekcija.Unos("select * from upisnica join osoba on Upisnica.osoba_id=Osoba.id where osoba.ime='" + s[0]+"' and osoba.prezime ='" + s[1]+"'");
+                    b = Konekcija.Unos("select id from osoba where ime='" + s[0]+"' and prezime ='" + s[1]+"' and uloga = 1");
+                    osobaID = (int)b.Rows[0][0];
+                    string[] f = comboBox6.Text.Split('/');
+                    k = Konekcija.Unos("select odeljenje.id from odeljenje join skolska_godina on odeljenje.godina_id=skolska_godina.id where odeljenje.razred=" + f[0].Trim() +" and odeljenje.indeks ='" + f[1].Trim()+"' and skolska_godina.naziv='" + f[2].Trim() + "/" + f[3].Trim() +"'"); 
                     if (a.Rows.Count != 0)
                     {
                         errorProvider1.SetError(button2, "Osoba je vec u odeljenju");
+                    }
+                    else if (b.Rows.Count==0)
+                    {
+                        errorProvider1.SetError(button2,"Takav ucenik ne postoji");
                     }
                     else
                     {
@@ -1074,7 +1310,7 @@ namespace esDnevnik_Mat
                             SqlConnection c = new SqlConnection(Konekcija.Veza());
                             c.Open();
                             com.Connection = c;
-                            com.CommandText = "insert into upisnica values('" + textBox2.Text + "'," + textBox3.Text + ")";
+                            com.CommandText = "insert into upisnica values(" + osobaID + "," + k.Rows[0][0] + ")";
                             com.ExecuteNonQuery();
                             c.Close();
                             button6.Enabled = true;
@@ -1084,10 +1320,57 @@ namespace esDnevnik_Mat
                             button1.Enabled = true;
                             button3.Enabled = true;
                             a = new DataTable();
-                            a = Konekcija.Unos("select * from predmet");
-                            predmetIndex = (int)a.Rows.Count;
-                            Predmet(predmetIndex);
-                            if (predmetIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
+                            a = Konekcija.Unos("select * from upisnica");
+                            upisnicaIndex = (int)a.Rows.Count;
+                            Upisnica(upisnicaIndex);
+                            if (upisnicaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
+                        }
+                        catch
+                        {
+                            errorProvider1.SetError(button2, "Uneti podaci nisu dobri");
+                        }
+                    }
+                }
+                catch { errorProvider1.SetError(button2, "Uneti podaci nisu dobri"); }
+            }
+            if (prikaz == "Raspodela")
+            {
+                try
+                {
+                    DataTable a,id1,id2,id3,id4 = new DataTable();
+                    string[] s = comboBox7.Text.Split(' ');
+                    id1 = Konekcija.Unos("select id from osoba where osoba.ime='" + s[0] + "' and osoba.prezime ='" + s[1] + "' and uloga=2");
+                    id2 = Konekcija.Unos("select id from skolska_godina where naziv ='"+comboBox6.Text+"'");
+                    id3 = Konekcija.Unos("select id from predmet where naziv ='"+comboBox2.Text+"'");
+                    s = comboBox3.Text.Split('/');
+                    id4 = Konekcija.Unos("select id from odeljenje where razred=" + s[0].Trim()+" and indeks ='" + s[1].Trim()+"' and godina_id=" + id2.Rows[0][0]);
+                    a = Konekcija.Unos("select * from raspodela where nastavnik_id=" + id1.Rows[0][0] + " and godina_id=" + id2.Rows[0][0] + " and predmet_id=" + id3.Rows[0][0] + " and odeljenje_id=" + id4.Rows[0][0]);
+                    if (a.Rows.Count!=0)
+                    {
+                        errorProvider1.SetError(button2, "Raspoedla vec postoji");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            SqlCommand com = new SqlCommand();
+                            SqlConnection c = new SqlConnection(Konekcija.Veza());
+                            c.Open();
+                            com.Connection = c;
+                            com.CommandText = "insert into raspodela values(" + id1.Rows[0][0].ToString() + "," + id2.Rows[0][0].ToString() + "," + id3.Rows[0][0].ToString() + "," + id4.Rows[0][0].ToString() + ")";
+                            com.ExecuteNonQuery();
+                            c.Close();
+                            button6.Enabled = true;
+                            button7.Enabled = true;
+                            button4.Enabled = false;
+                            button5.Enabled = false;
+                            button1.Enabled = true;
+                            button3.Enabled = true;
+                            a = new DataTable();
+                            a = Konekcija.Unos("select * from raspodela");
+                            raspodelaIndex = (int)a.Rows.Count;
+                            Raspodela(raspodelaIndex);
+                            if (raspodelaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
                         }
                         catch
                         {
@@ -1099,108 +1382,291 @@ namespace esDnevnik_Mat
             }
         }
 
+        private void raspodelaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            errorProvider1.Clear();
+            DataTable u1,u2,u3,u4, k = new DataTable();
+            u1 = Konekcija.Unos("select id from osoba where uloga=2");
+            u2 = Konekcija.Unos("select id from skolska_godina");
+            u3 = Konekcija.Unos("select id from predmet");
+            u4 = Konekcija.Unos("select id from odeljenje");
+            if (u1.Rows.Count > 0 && u1.Rows.Count > 0 && u3.Rows.Count > 0 && u4.Rows.Count > 0)
+            {
+                prikaz = "Raspodela";
+                DataTable a = new DataTable();
+                a = Konekcija.Unos("select * from raspodela");
+                if (a.Rows.Count >= 1)
+                {
+                    comboBox1.Text = "";
+                    comboBox5.Text = "";
+                    textBox6.Enabled = true;
+                    textBox3.Enabled = true;
+                    comboBox1.Items.Clear();
+                    comboBox5.Items.Clear();
+                    label12.Visible = false;
+                    label13.Visible = false;
+                    comboBox5.Visible = false;
+                    comboBox1.Visible = false;
+                    textBox2.Enabled = true;
+                    button1.Enabled = true;
+                    button2.Enabled = true;
+                    button3.Enabled = true;
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    comboBox2.Visible = true;
+                    comboBox3.Visible = true;
+                    comboBox4.Visible = false;
+                    comboBox6.Visible = true;
+                    comboBox7.Visible = true;
+                    label4.Visible = true;
+                    label5.Visible = true;
+                    label6.Visible = false;
+                    label1.Visible = true;
+                    label2.Visible = true;
+                    label3.Visible = true;
+                    label7.Visible = false;
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox1.Visible = true;
+                    textBox2.Visible = false;
+                    textBox3.Visible = false;
+                    textBox4.Visible = false;
+                    textBox5.Visible = false;
+                    textBox6.Visible = false;
+                    textBox7.Visible = false;
+                    textBox8.Visible = false;
+                    label1.Text = "ID";
+                    label2.Text = "Profesor";
+                    label3.Text = "     Godina";
+                    label4.Text = "Predmet";
+                    label5.Text = "Odeljenje";
+                    comboBox7.Items.Clear();
+                    comboBox6.Items.Clear();
+                    comboBox2.Items.Clear();
+                    comboBox3.Items.Clear();
+                    k = Konekcija.Unos("select ime+' '+prezime from osoba where uloga = 2");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox7.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select naziv from skolska_godina");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox6.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select naziv from predmet");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox2.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select distinct Odeljenje.razred,Odeljenje.indeks from Odeljenje");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox3.Items.Add(k.Rows[i][0].ToString() + " / " + k.Rows[i][1].ToString());
+                    Raspodela(1);
+                    raspodelaIndex = 1;
+                }
+                if (a.Rows.Count == 1)
+                {
+                    button4.Enabled = false;
+                    button5.Enabled = false;
+                }
+                if (a.Rows.Count == 0)
+                {
+                    upisnicaIndex = 0;
+                    MessageBox.Show("Nema raspodela u bazi");
+                    comboBox1.Text = "";
+                    comboBox5.Text = "";
+                    textBox6.Enabled = true;
+                    textBox3.Enabled = true;
+                    comboBox1.Items.Clear();
+                    comboBox5.Items.Clear();
+                    label12.Visible = false;
+                    label13.Visible = false;
+                    comboBox5.Visible = false;
+                    comboBox1.Visible = false;
+                    textBox2.Enabled = true;
+                    button1.Enabled = false;
+                    button2.Enabled = true;
+                    button3.Enabled = false;
+                    button4.Enabled = false;
+                    button5.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    comboBox2.Visible = true;
+                    comboBox3.Visible = true;
+                    comboBox4.Visible = false;
+                    comboBox7.Visible = true;
+                    comboBox6.Visible = true;
+                    label4.Visible = true;
+                    label5.Visible = true;
+                    label6.Visible = false;
+                    label1.Visible = true;
+                    label2.Visible = true;
+                    label3.Visible = true;
+                    label7.Visible = false;
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox1.Visible = true;
+                    textBox2.Visible = false;
+                    textBox3.Visible = false;
+                    textBox4.Visible = false;
+                    textBox5.Visible = false;
+                    textBox6.Visible = false;
+                    textBox7.Visible = false;
+                    textBox8.Visible = false;
+                    label1.Text = "ID";
+                    label2.Text = "Profesor";
+                    label3.Text = "     Godina";
+                    label4.Text = "Predmet";
+                    label5.Text = "Odeljenje";
+                    comboBox2.Text = "";
+                    comboBox3.Text = "";
+                    comboBox6.Text = "";
+                    comboBox2.Text = "";
+                    textBox1.Text = "";
+                    comboBox7.Items.Clear();
+                    comboBox6.Items.Clear();
+                    comboBox2.Items.Clear();
+                    comboBox3.Items.Clear();
+                    k = Konekcija.Unos("select ime+' '+prezime from osoba where uloga = 2");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox7.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select naziv from skolska_godina");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox6.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select naziv from predmet");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox2.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select distinct Odeljenje.razred,Odeljenje.indeks from Odeljenje");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox3.Items.Add(k.Rows[i][0].ToString() + " / " + k.Rows[i][1].ToString());
+                }
+            }
+            else { MessageBox.Show("Ne postoje podaci potrebni za rad nad ovom tabelom"); }
+        }
+
         private void upisnicaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             errorProvider1.Clear();
-            prikaz = "Upisnica";
-            DataTable a = new DataTable();
-            a = Konekcija.Unos("select * from upisnica");
-            if (a.Rows.Count >= 1)
+            DataTable b,c,k = new DataTable();
+            b = Konekcija.Unos("select id from osoba where uloga=1");
+            c = Konekcija.Unos("select id from odeljenje");
+            if (b.Rows.Count > 0 && c.Rows.Count > 0)
             {
-                comboBox1.Text = "";
-                comboBox5.Text = "";
-                textBox6.Enabled = true;
-                textBox3.Enabled = true;
-                comboBox1.Items.Clear();
-                comboBox5.Items.Clear();
-                label12.Visible = false;
-                label13.Visible = false;
-                comboBox5.Visible = false;
-                comboBox1.Visible = false;
-                textBox2.Enabled = true;
-                button1.Enabled = true;
-                button2.Enabled = true;
-                button3.Enabled = true;
-                button4.Enabled = true;
-                button5.Enabled = true;
-                comboBox2.Visible = false;
-                comboBox3.Visible = false;
-                comboBox4.Visible = false;
-                label4.Visible = false;
-                label5.Visible = false;
-                label6.Visible = false;
-                label1.Visible = true;
-                label2.Visible = true;
-                label3.Visible = true;
-                label7.Visible = false;
-                label8.Visible = false;
-                label9.Visible = false;
-                label10.Visible = false;
-                label11.Visible = false;
-                textBox1.Visible = true;
-                textBox2.Visible = true;
-                textBox3.Visible = true;
-                textBox4.Visible = false;
-                textBox5.Visible = false;
-                textBox6.Visible = false;
-                textBox7.Visible = false;
-                textBox8.Visible = false;
-                label1.Text = "ID";
-                label2.Text = "Ucenik";
-                label3.Text = " Odeljenje";
-                Upisnica(1);
-                upisnicaIndex = 1;
+                prikaz = "Upisnica";
+                DataTable a= new DataTable();
+                a = Konekcija.Unos("select * from upisnica");
+                if (a.Rows.Count >= 1)
+                {
+                    comboBox1.Text = "";
+                    comboBox5.Text = "";
+                    textBox6.Enabled = true;
+                    textBox3.Enabled = true;
+                    comboBox1.Items.Clear();
+                    comboBox5.Items.Clear();
+                    label12.Visible = false;
+                    label13.Visible = false;
+                    comboBox5.Visible = false;
+                    comboBox1.Visible = false;
+                    textBox2.Enabled = true;
+                    button1.Enabled = true;
+                    button2.Enabled = true;
+                    button3.Enabled = true;
+                    button4.Enabled = true;
+                    button5.Enabled = true;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    comboBox2.Visible = false;
+                    comboBox3.Visible = false;
+                    comboBox4.Visible = false;
+                    comboBox6.Visible = true;
+                    comboBox7.Visible = true;
+                    label4.Visible = false;
+                    label5.Visible = false;
+                    label6.Visible = false;
+                    label1.Visible = true;
+                    label2.Visible = true;
+                    label3.Visible = true;
+                    label7.Visible = false;
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox1.Visible = true;
+                    textBox2.Visible = false;
+                    textBox3.Visible = false;
+                    textBox4.Visible = false;
+                    textBox5.Visible = false;
+                    textBox6.Visible = false;
+                    textBox7.Visible = false;
+                    textBox8.Visible = false;
+                    label1.Text = "ID";
+                    label2.Text = "Ucenik";
+                    label3.Text = " Odeljenje";
+                    comboBox7.Items.Clear();
+                    comboBox6.Items.Clear();
+                    k = Konekcija.Unos("select ime+' '+prezime from osoba where uloga = 1");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox7.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select Odeljenje.razred,Odeljenje.indeks,Skolska_godina.naziv from Odeljenje join Skolska_godina on Odeljenje.godina_id=Skolska_godina.id");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox6.Items.Add(k.Rows[i][0].ToString() + " / " + k.Rows[i][1].ToString() + " / " + k.Rows[i][2].ToString());
+                    Upisnica(1);
+                    upisnicaIndex = 1;
+                }
+                if (a.Rows.Count == 1)
+                {
+                    button4.Enabled = false;
+                    button5.Enabled = false;
+                }
+                if (a.Rows.Count == 0)
+                {
+                    upisnicaIndex = 0;
+                    MessageBox.Show("Nema upisnica u bazi");
+                    comboBox1.Text = "";
+                    comboBox5.Text = "";
+                    textBox6.Enabled = true;
+                    textBox3.Enabled = true;
+                    comboBox1.Items.Clear();
+                    comboBox5.Items.Clear();
+                    label12.Visible = false;
+                    label13.Visible = false;
+                    comboBox5.Visible = false;
+                    comboBox1.Visible = false;
+                    textBox2.Enabled = true;
+                    button1.Enabled = false;
+                    button2.Enabled = true;
+                    button3.Enabled = false;
+                    button4.Enabled = false;
+                    button5.Enabled = false;
+                    button6.Enabled = false;
+                    button7.Enabled = false;
+                    comboBox2.Visible = false;
+                    comboBox3.Visible = false;
+                    comboBox4.Visible = false;
+                    comboBox7.Visible = true;
+                    comboBox6.Visible = true;
+                    label4.Visible = false;
+                    label5.Visible = false;
+                    label6.Visible = false;
+                    label1.Visible = true;
+                    label2.Visible = true;
+                    label3.Visible = true;
+                    label7.Visible = false;
+                    label8.Visible = false;
+                    label9.Visible = false;
+                    label10.Visible = false;
+                    label11.Visible = false;
+                    textBox1.Visible = true;
+                    textBox2.Visible = false;
+                    textBox3.Visible = false;
+                    textBox4.Visible = false;
+                    textBox5.Visible = false;
+                    textBox6.Visible = false;
+                    textBox7.Visible = false;
+                    textBox8.Visible = false;
+                    label1.Text = "ID";
+                    label2.Text = "Ucenik";
+                    label3.Text = " Odeljenje";
+                    comboBox7.Items.Clear();
+                    comboBox6.Items.Clear();
+                    k = Konekcija.Unos("select ime+' '+prezime from osoba where uloga = 1");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox7.Items.Add(k.Rows[i][0].ToString());
+                    k = Konekcija.Unos("select Odeljenje.razred,Odeljenje.indeks,Skolska_godina.naziv from Odeljenje join Skolska_godina on Odeljenje.godina_id=Skolska_godina.id");
+                    for (int i = 0; i < k.Rows.Count; i++) comboBox6.Items.Add(k.Rows[i][0].ToString() + " / " + k.Rows[i][1].ToString() + " / " + k.Rows[i][2].ToString());
+                }
             }
-            if (a.Rows.Count == 1)
-            {
-                button4.Enabled = false;
-                button5.Enabled = false;
-            }
-            if (a.Rows.Count == 0)
-            {
-                MessageBox.Show("Nema upisnica u bazi");
-                comboBox1.Text = "";
-                comboBox5.Text = "";
-                textBox6.Enabled = true;
-                textBox3.Enabled = true;
-                comboBox1.Items.Clear();
-                comboBox5.Items.Clear();
-                label12.Visible = false;
-                label13.Visible = false;
-                comboBox5.Visible = false;
-                comboBox1.Visible = false;
-                textBox2.Enabled = true;
-                button1.Enabled = true;
-                button2.Enabled = true;
-                button3.Enabled = true;
-                button4.Enabled = true;
-                button5.Enabled = true;
-                comboBox2.Visible = false;
-                comboBox3.Visible = false;
-                comboBox4.Visible = false;
-                label4.Visible = false;
-                label5.Visible = false;
-                label6.Visible = false;
-                label1.Visible = true;
-                label2.Visible = true;
-                label3.Visible = true;
-                label7.Visible = false;
-                label8.Visible = false;
-                label9.Visible = false;
-                label10.Visible = false;
-                label11.Visible = false;
-                textBox1.Visible = true;
-                textBox2.Visible = true;
-                textBox3.Visible = true;
-                textBox4.Visible = false;
-                textBox5.Visible = false;
-                textBox6.Visible = false;
-                textBox7.Visible = false;
-                textBox8.Visible = false;
-                label1.Text = "ID";
-                label2.Text = "Ucenik";
-                label3.Text = " Odeljenje";
-            }
+            else { MessageBox.Show("Ne postoje podaci potrebni za rad nad ovom tabelom"); }
         }
 
         private void osobaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1212,6 +1678,8 @@ namespace esDnevnik_Mat
 ;            if (a.Rows.Count>=1) {
                 comboBox1.Text = "";
                 comboBox5.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1277,6 +1745,8 @@ namespace esDnevnik_Mat
                 textBox6.Text = "";
                 textBox7.Text = "";
                 textBox8.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1336,6 +1806,8 @@ namespace esDnevnik_Mat
             if (b.Rows.Count>=1) {
                 comboBox1.Text = "";
                 comboBox5.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox3.Enabled = true;
                 textBox6.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1410,6 +1882,8 @@ namespace esDnevnik_Mat
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox3.Enabled = true;
                 textBox6.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1473,6 +1947,8 @@ namespace esDnevnik_Mat
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
             comboBox4.Items.Clear();
+            comboBox6.Visible = false;
+            comboBox7.Visible = false;
             textBox3.Enabled = false;
             textBox6.Enabled = false;
             button1.Enabled = false;
@@ -1815,6 +2291,8 @@ namespace esDnevnik_Mat
             {
                 comboBox1.Text = "";
                 comboBox5.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1870,6 +2348,8 @@ namespace esDnevnik_Mat
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1922,6 +2402,8 @@ namespace esDnevnik_Mat
             {
                 comboBox1.Text = "";
                 comboBox5.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -1975,6 +2457,8 @@ namespace esDnevnik_Mat
                 comboBox5.Text = "";
                 textBox1.Text = "";
                 textBox2.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -2024,6 +2508,8 @@ namespace esDnevnik_Mat
             a = Konekcija.Unos("select * from skolska_godina"); 
             if (a.Rows.Count >= 1)
             {
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 comboBox1.Text = "";
                 comboBox5.Text = "";
                 textBox6.Enabled = true;
@@ -2079,6 +2565,8 @@ namespace esDnevnik_Mat
                 comboBox5.Text = "";
                 textBox1.Text = "";
                 textBox2.Text = "";
+                comboBox7.Visible = false;
+                comboBox6.Visible = false;
                 textBox6.Enabled = true;
                 textBox3.Enabled = true;
                 comboBox1.Items.Clear();
@@ -2169,6 +2657,13 @@ namespace esDnevnik_Mat
                 x = Konekcija.Unos("select count(id) from upisnica");
                 Upisnica((int)x.Rows[0][0]);
                 upisnicaIndex = (int)x.Rows[0][0];
+            }
+            if (prikaz == "Raspodela")
+            {
+                DataTable x = new DataTable();
+                x = Konekcija.Unos("select count(id) from raspodela");
+                Raspodela((int)x.Rows[0][0]);
+                raspodelaIndex = (int)x.Rows[0][0];
             }
             button5.Enabled = false;
             button4.Enabled = false;

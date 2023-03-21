@@ -1421,7 +1421,28 @@ namespace esDnevnik_Mat
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            Ocena(e.RowIndex+1);
+            if (e.RowIndex != dataGridView1.Rows.Count - 1)
+            {
+                Ocena(e.RowIndex + 1);
+                ocenaIndex = e.RowIndex + 1;
+            }
+            if (e.RowIndex == 0)
+            {
+                button6.Enabled = false;
+                button7.Enabled=false;
+            }else
+            if (e.RowIndex==dataGridView1.Rows.Count-2)
+            {
+                button4.Enabled=false;
+                button5.Enabled=false;
+            }
+            else
+            {
+                button4.Enabled = true;
+                button5.Enabled = true;
+                button6.Enabled = true;
+                button7.Enabled = true;
+            }
         }
 
         private void raspodelaToolStripMenuItem_Click(object sender, EventArgs e)

@@ -43,6 +43,7 @@ namespace esDnevnik_Mat
         public Form1()
         {
             InitializeComponent();
+            dataGridView1.Visible = false;
             label1.Visible = false;
             label2.Visible = false;
             label3.Visible = false;
@@ -623,6 +624,18 @@ namespace esDnevnik_Mat
                     Ocene2 = new DataTable();
                     Ocene1 = Konekcija.Unos("select osoba.ime + ' ' + Osoba.prezime, Ocena.ocena, Ocena.datum, Ocena.id from Osoba join ocena on Osoba.id=Ocena.ucenik_id join Raspodela on Ocena.raspodela_id=Raspodela.id join Predmet on Raspodela.predmet_id=Predmet.id join Odeljenje on Raspodela.odeljenje_id=Odeljenje.id where predmet_id=" + predmetID + " and odeljenje_id=" + odeljenjeID);
                     Ocene2 = Konekcija.Unos("select Osoba.ime + ' ' + Osoba.prezime, Predmet.naziv, Raspodela.id from Osoba join Raspodela on Osoba.id = Raspodela.nastavnik_id join Predmet on Raspodela.predmet_id = Predmet.id join Odeljenje on Raspodela.odeljenje_id = Odeljenje.id where predmet_id = " + predmetID + " and odeljenje_id =" + odeljenjeID);
+                    DataTable src = new DataTable();
+                    src.Columns.Add("Id");
+                    src.Columns.Add("Profesor");
+                    src.Columns.Add("Ucenik");
+                    src.Columns.Add("Ocena");
+                    src.Columns.Add("Datum");
+                    for (int i = 0; i < Ocene1.Rows.Count; i++)
+                    {
+                        string[] row = new string[] { Ocene1.Rows[i][3].ToString(), Ocene2.Rows[0][0].ToString(), Ocene1.Rows[i][0].ToString(), Ocene1.Rows[i][1].ToString(), Ocene1.Rows[i][2].ToString(), };
+                        src.Rows.Add(row);
+                    }
+                    dataGridView1.DataSource = src;
                     button4.Enabled = true;
                     button5.Enabled = true;
                     button6.Enabled = false;
@@ -945,6 +958,18 @@ namespace esDnevnik_Mat
                     Ocene2 = new DataTable();
                     Ocene1 = Konekcija.Unos("select osoba.ime + ' ' + Osoba.prezime, Ocena.ocena, Ocena.datum, Ocena.id from Osoba join ocena on Osoba.id=Ocena.ucenik_id join Raspodela on Ocena.raspodela_id=Raspodela.id join Predmet on Raspodela.predmet_id=Predmet.id join Odeljenje on Raspodela.odeljenje_id=Odeljenje.id where predmet_id=" + predmetID + " and odeljenje_id=" + odeljenjeID);
                     Ocene2 = Konekcija.Unos("select Osoba.ime + ' ' + Osoba.prezime, Predmet.naziv, Raspodela.id from Osoba join Raspodela on Osoba.id = Raspodela.nastavnik_id join Predmet on Raspodela.predmet_id = Predmet.id join Odeljenje on Raspodela.odeljenje_id = Odeljenje.id where predmet_id = " + predmetID + " and odeljenje_id =" + odeljenjeID);
+                    DataTable src = new DataTable();
+                    src.Columns.Add("Id");
+                    src.Columns.Add("Profesor");
+                    src.Columns.Add("Ucenik");
+                    src.Columns.Add("Ocena");
+                    src.Columns.Add("Datum");
+                    for (int i = 0; i < Ocene1.Rows.Count; i++)
+                    {
+                        string[] row = new string[] { Ocene1.Rows[i][3].ToString(), Ocene2.Rows[0][0].ToString(), Ocene1.Rows[i][0].ToString(), Ocene1.Rows[i][1].ToString(), Ocene1.Rows[i][2].ToString(), };
+                        src.Rows.Add(row);
+                    }
+                    dataGridView1.DataSource = src;
                     Ocena(ocenaIndex);
                 }
                 catch
@@ -1271,6 +1296,18 @@ namespace esDnevnik_Mat
                         Ocene2 = new DataTable();
                         Ocene1 = Konekcija.Unos("select osoba.ime + ' ' + Osoba.prezime, Ocena.ocena, Ocena.datum, Ocena.id from Osoba join ocena on Osoba.id=Ocena.ucenik_id join Raspodela on Ocena.raspodela_id=Raspodela.id join Predmet on Raspodela.predmet_id=Predmet.id join Odeljenje on Raspodela.odeljenje_id=Odeljenje.id where predmet_id=" + predmetID + " and odeljenje_id=" + odeljenjeID);
                         Ocene2 = Konekcija.Unos("select Osoba.ime + ' ' + Osoba.prezime, Predmet.naziv, Raspodela.id from Osoba join Raspodela on Osoba.id = Raspodela.nastavnik_id join Predmet on Raspodela.predmet_id = Predmet.id join Odeljenje on Raspodela.odeljenje_id = Odeljenje.id where predmet_id = " + predmetID + " and odeljenje_id =" + odeljenjeID);
+                        DataTable src = new DataTable();
+                        src.Columns.Add("Id");
+                        src.Columns.Add("Profesor");
+                        src.Columns.Add("Ucenik");
+                        src.Columns.Add("Ocena");
+                        src.Columns.Add("Datum");
+                        for (int i = 0; i < Ocene1.Rows.Count; i++)
+                        {
+                            string[] row = new string[] { Ocene1.Rows[i][3].ToString(), Ocene2.Rows[0][0].ToString(), Ocene1.Rows[i][0].ToString(), Ocene1.Rows[i][1].ToString(), Ocene1.Rows[i][2].ToString(), };
+                            src.Rows.Add(row);
+                        }
+                        dataGridView1.DataSource = src;
                         ocenaIndex = Ocene1.Rows.Count;
                         Ocena(ocenaIndex);
                         if (ocenaIndex == 1) { button6.Enabled = false; button7.Enabled = false; }
@@ -1382,6 +1419,11 @@ namespace esDnevnik_Mat
             }
         }
 
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Ocena(e.RowIndex+1);
+        }
+
         private void raspodelaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             errorProvider1.Clear();
@@ -1398,7 +1440,8 @@ namespace esDnevnik_Mat
                 if (a.Rows.Count >= 1)
                 {
                     comboBox1.Text = "";
-                    comboBox5.Text = "";
+                    comboBox5.Text = "";                   
+                    dataGridView1.Visible = false;
                     textBox6.Enabled = true;
                     textBox3.Enabled = true;
                     comboBox1.Items.Clear();
@@ -1468,6 +1511,7 @@ namespace esDnevnik_Mat
                 {
                     upisnicaIndex = 0;
                     MessageBox.Show("Nema raspodela u bazi");
+                    dataGridView1.Visible = false;
                     textBox6.Enabled = true;
                     textBox3.Enabled = true;
                     comboBox1.Items.Clear();
@@ -1550,6 +1594,7 @@ namespace esDnevnik_Mat
                 {
                     comboBox1.Text = "";
                     comboBox5.Text = "";
+                    dataGridView1.Visible = false;
                     textBox6.Enabled = true;
                     textBox3.Enabled = true;
                     comboBox1.Items.Clear();
@@ -1613,6 +1658,7 @@ namespace esDnevnik_Mat
                     MessageBox.Show("Nema upisnica u bazi");
                     comboBox1.Text = "";
                     comboBox5.Text = "";
+                    dataGridView1.Visible = false;
                     textBox6.Enabled = true;
                     textBox3.Enabled = true;
                     comboBox1.Items.Clear();
@@ -1674,6 +1720,7 @@ namespace esDnevnik_Mat
             DataTable a = new DataTable();
             a = Konekcija.Unos("select * from osoba")
 ;            if (a.Rows.Count>=1) {
+                dataGridView1.Visible = false;
                 comboBox1.Text = "";
                 comboBox5.Text = "";
                 comboBox7.Visible = false;
@@ -1743,6 +1790,7 @@ namespace esDnevnik_Mat
                 textBox6.Text = "";
                 textBox7.Text = "";
                 textBox8.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox6.Enabled = true;
@@ -1802,6 +1850,7 @@ namespace esDnevnik_Mat
             smer = Konekcija.Unos("Select * from smer");
             godina = Konekcija.Unos("Select * from skolska_godina");
             if (b.Rows.Count>=1) {
+                dataGridView1.Visible = false;
                 comboBox1.Text = "";
                 comboBox5.Text = "";
                 comboBox7.Visible = false;
@@ -1880,6 +1929,7 @@ namespace esDnevnik_Mat
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox3.Enabled = true;
@@ -1945,6 +1995,8 @@ namespace esDnevnik_Mat
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
             comboBox4.Items.Clear();
+            dataGridView1.Visible = true;
+            dataGridView1.DataSource = new DataTable();
             comboBox6.Visible = false;
             comboBox7.Visible = false;
             textBox3.Enabled = false;
@@ -2061,6 +2113,7 @@ namespace esDnevnik_Mat
                     Ocene2 = Konekcija.Unos("select Osoba.ime + ' ' + Osoba.prezime, Predmet.naziv, Raspodela.id from Osoba join Raspodela on Osoba.id = Raspodela.nastavnik_id join Predmet on Raspodela.predmet_id = Predmet.id join Odeljenje on Raspodela.odeljenje_id = Odeljenje.id where predmet_id = " + predmetID + " and odeljenje_id =" + odeljenjeID);
                     if (Ocene1.Rows.Count >= 1)
                     {
+                        dataGridView1.Visible = true;
                         button1.Enabled = true;
                         button2.Enabled = true;
                         button3.Enabled = true;
@@ -2084,6 +2137,18 @@ namespace esDnevnik_Mat
                         label4.Text = "Ucenik";
                         label5.Text = "Ocena";
                         label6.Text = "Datum";
+                        DataTable src = new DataTable();
+                        src.Columns.Add("Id");
+                        src.Columns.Add("Profesor");
+                        src.Columns.Add("Ucenik");
+                        src.Columns.Add("Ocena");
+                        src.Columns.Add("Datum");
+                        for (int i = 0; i < Ocene1.Rows.Count; i++)
+                        {
+                            string[] row = new string[] { Ocene1.Rows[i][3].ToString(), Ocene2.Rows[0][0].ToString(), Ocene1.Rows[i][0].ToString(), Ocene1.Rows[i][1].ToString(), Ocene1.Rows[i][2].ToString(), };
+                            src.Rows.Add(row);
+                        }
+                        dataGridView1.DataSource = src;
                         Ocena(1);
                         comboBox2.Items.Clear();
                         for (int i = 0; i < Ucenici.Rows.Count; i++) comboBox2.Items.Add(Ucenici.Rows[i][0].ToString());
@@ -2096,6 +2161,7 @@ namespace esDnevnik_Mat
                     if (Ocene1.Rows.Count == 0)
                     {
                         MessageBox.Show("Nema ocena u bazi");
+                        dataGridView1.DataSource = new DataTable();
                         button1.Enabled = true;
                         button2.Enabled = true;
                         button3.Enabled = true;
@@ -2127,6 +2193,7 @@ namespace esDnevnik_Mat
                 }
                 else {
                     MessageBox.Show("Odeljenje nema taj predmet");
+                    dataGridView1.DataSource = new DataTable();
                     comboBox1.Text = "";
                     comboBox5.Text = "";
                     label2.Visible = false;
@@ -2177,6 +2244,7 @@ namespace esDnevnik_Mat
                     Ocene2 = Konekcija.Unos("select Osoba.ime + ' ' + Osoba.prezime, Predmet.naziv, Raspodela.id from Osoba join Raspodela on Osoba.id = Raspodela.nastavnik_id join Predmet on Raspodela.predmet_id = Predmet.id join Odeljenje on Raspodela.odeljenje_id = Odeljenje.id where predmet_id = " + predmetID + " and odeljenje_id =" + odeljenjeID);
                     if (Ocene1.Rows.Count >= 1)
                     {
+                        dataGridView1.Visible = true;
                         button1.Enabled = true;
                         button2.Enabled = true;
                         button3.Enabled = true;
@@ -2201,6 +2269,18 @@ namespace esDnevnik_Mat
                         label4.Text = "Ucenik";
                         label5.Text = "Ocena";
                         label6.Text = "Datum";
+                        DataTable src = new DataTable();
+                        src.Columns.Add("Id");
+                        src.Columns.Add("Profesor");
+                        src.Columns.Add("Ucenik");
+                        src.Columns.Add("Ocena");
+                        src.Columns.Add("Datum");
+                        for (int i = 0; i < Ocene1.Rows.Count; i++)
+                        {
+                            string[] row = new string[] { Ocene1.Rows[i][3].ToString(), Ocene2.Rows[0][0].ToString(), Ocene1.Rows[i][0].ToString(), Ocene1.Rows[i][1].ToString(), Ocene1.Rows[i][2].ToString(), };
+                            src.Rows.Add(row);
+                        }
+                        dataGridView1.DataSource = src;
                         Ocena(1);
                         comboBox2.Items.Clear();
                         for (int i = 0; i < Ucenici.Rows.Count; i++) comboBox2.Items.Add(Ucenici.Rows[i][0].ToString());
@@ -2213,6 +2293,7 @@ namespace esDnevnik_Mat
                     if (Ocene1.Rows.Count == 0)
                     {
                         MessageBox.Show("Nema ocena u bazi");
+                        dataGridView1.DataSource = new DataTable();
                         textBox2.Text = "";
                         textBox3.Text = "";
                         textBox5.Text = "";
@@ -2245,6 +2326,7 @@ namespace esDnevnik_Mat
                 }
                 else { 
                     MessageBox.Show("Odeljenje nema taj predmet");
+                    dataGridView1.DataSource = new DataTable();
                     comboBox1.Text = ""; 
                     comboBox5.Text = "";
                     label2.Visible = false;
@@ -2288,6 +2370,7 @@ namespace esDnevnik_Mat
             {
                 comboBox1.Text = "";
                 comboBox5.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox6.Enabled = true;
@@ -2345,6 +2428,7 @@ namespace esDnevnik_Mat
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox6.Enabled = true;
@@ -2399,6 +2483,7 @@ namespace esDnevnik_Mat
             {
                 comboBox1.Text = "";
                 comboBox5.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox6.Enabled = true;
@@ -2454,6 +2539,7 @@ namespace esDnevnik_Mat
                 comboBox5.Text = "";
                 textBox1.Text = "";
                 textBox2.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox6.Enabled = true;
@@ -2505,6 +2591,7 @@ namespace esDnevnik_Mat
             a = Konekcija.Unos("select * from skolska_godina"); 
             if (a.Rows.Count >= 1)
             {
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 comboBox1.Text = "";
@@ -2562,6 +2649,7 @@ namespace esDnevnik_Mat
                 comboBox5.Text = "";
                 textBox1.Text = "";
                 textBox2.Text = "";
+                dataGridView1.Visible = false;
                 comboBox7.Visible = false;
                 comboBox6.Visible = false;
                 textBox6.Enabled = true;

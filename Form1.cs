@@ -1425,7 +1425,7 @@ namespace esDnevnik_Mat
             {
                 Ocena(e.RowIndex + 1);
                 ocenaIndex = e.RowIndex + 1;
-            }
+            
             if (e.RowIndex == 0)
             {
                 button6.Enabled = false;
@@ -1443,6 +1443,7 @@ namespace esDnevnik_Mat
                 button6.Enabled = true;
                 button7.Enabled = true;
             }
+            } 
         }
 
         private void raspodelaToolStripMenuItem_Click(object sender, EventArgs e)
